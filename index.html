@@ -155,7 +155,7 @@
                 <!-- Contact Section Form-->
                 <div class="row justify-content-center">
                     <div class="col-lg-8 col-xl-7">
-                        <form id="contactForm">
+                        <form id="contactForm" data-sb-form-api-token="a5311acd-7eac-41c0-9b3a-48b67368137e">
                             <!-- Name input-->
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="name" type="text" placeholder="Introduce tu nombre" data-sb-validations="required" />
@@ -443,23 +443,5 @@
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-        <script>
-            const scriptURL = "https://script.google.com/macros/s/AKfycbyISgzSn4O5vCO5kRIemdLVKyI5JOaTCPCEiGqooIQnzJTU_D4JYRHdjDMjRBM2jAMf/exec"; // Lo pondremos en el paso 3
-            const form = document.getElementById("contactForm");
-            <!--const status = document.getElementById("status");-->
-    
-            form.addEventListener("submit", e => {
-                e.preventDefault();
-                fetch(scriptURL, { method: "POST", body: new FormData(form) })
-                    .then(response => {
-                        <!--status.textContent = "Formulario enviado. Revisa tu correo.";-->
-                        form.reset();
-                    })
-                    .catch(error => {
-                        <!--status.textContent = "Error al enviar. Intenta de nuevo.";-->
-                        console.error(error);
-                    });
-            });
-        </script>
     </body>
 </html>
