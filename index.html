@@ -29,6 +29,7 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#portfolio">Portafolio</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#proyectos">Proyectos</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#halloffame">Road to Hall of Fame</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#about">About</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contacto</a></li>
                     </ul>
@@ -376,6 +377,323 @@
                             <p><strong>Privacidad de Datos:</strong> La recopilación de datos sobre el comportamiento de los usuarios debe cumplir con regulaciones de protección de datos (GDPR, CCPA, etc.).</p>
                             <p><strong>Propósito Educativo:</strong> Las simulaciones deben enfocarse en educación y mejora, no en castigo o disciplina de empleados.</p>
                             <p class="mb-0"><strong>Transparencia:</strong> Las organizaciones deben ser transparentes sobre sus programas de simulación de phishing y proporcionan recursos de apoyo a empleados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Road to Hall of Fame Section-->
+        <section class="page-section portfolio bg-light" id="halloffame">
+            <div class="container">
+                <!-- Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Road to Hall of Fame</h2>
+                <!-- Icon Divider-->
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-star"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+                
+                <!-- SQL Injection Module -->
+                <div class="row justify-content-center mb-5">
+                    <div class="col-lg-10">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-body">
+                                <h4 class="card-title text-secondary mb-3">
+                                    <i class="fas fa-database text-danger"></i> Módulo: SQL Injection - Inyección en Bases de Datos
+                                </h4>
+                                <p class="card-text">
+                                    Este módulo comprende un análisis integral de las vulnerabilidades de <strong>SQL Injection</strong>, 
+                                    una de las técnicas de ataque más críticas y persistentes en aplicaciones web según el OWASP Top 10. 
+                                    Se han completado 18 laboratorios prácticos progresivos utilizando la plataforma PortSwigger Web Security Academy 
+                                    y la herramienta Burp Suite.
+                                </p>
+                                <p class="card-text mb-0">
+                                    <strong>Áreas cubiertas:</strong> Manipulación de consultas SQL, extracción de datos, bypass de autenticación, 
+                                    ataques In-band, Blind SQL Injection, técnicas Out-of-band, y mitigación mediante prepared statements.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Laboratorios Completados -->
+                        <h5 class="text-secondary mb-3">18 Laboratorios Completados</h5>
+                        
+                        <div class="row g-3">
+                            <!-- Lab 1 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-primary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 1: WHERE Clause Injection
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Manipulación de la cláusula WHERE para recuperar datos ocultos. 
+                                            Inyección: <code>category' OR 1=1--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 2 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 2: Login Bypass
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Evasión de mecanismos de autenticación. 
+                                            Inyección: <code>administrator'--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 3 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-info">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-info">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 3: Oracle Version Detection
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            UNION-based SQLi para detectar versión de BD Oracle.
+                                            Payload: <code>UNION SELECT BANNER, NULL FROM v$version--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 4 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-warning">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-warning">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 4: MySQL Version Detection
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Extracción de versión en MySQL/MS SQL. 
+                                            Payload: <code>UNION SELECT @@version, NULL#</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 5 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-danger">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-danger">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 5: Non-Oracle Schema Enumeration
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Enumeración de esquemas en PostgreSQL.
+                                            Payload: <code>UNION SELECT table_name FROM information_schema.tables--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 6 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-secondary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-secondary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 6: Column Count Detection
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Determinación del número de columnas retornadas.
+                                            Método: <code>UNION SELECT NULL, NULL, NULL--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 7 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-primary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 7: Cross-Table Data Retrieval
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Extracción de datos de múltiples tablas.
+                                            Payload: <code>UNION SELECT username, password FROM users--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 8 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 8: Single Column Concatenation
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Concatenación de múltiples valores en una sola columna.
+                                            Payload: <code>UNION SELECT username||'~'||password FROM users--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 9 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-info">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-info">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 9: Boolean-based Blind SQLi
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Inferencia de datos mediante respuestas booleanas.
+                                            Técnica: Evaluación condicional de verdadero/falso
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 10 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-warning">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-warning">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 10: Conditional Errors SQLi
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Extracción de datos mediante errores de tipo.
+                                            Payload: <code>AND 1=CAST((SELECT username FROM users) AS int)--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 11 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-danger">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-danger">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 11: Error-based SQLi
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Explotación de mensajes de error detallados.
+                                            Técnica: Provocar errores intencionales para extraer información
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 12 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-secondary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-secondary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 12: Time-based Blind SQLi
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Detección mediante retrasos en respuesta.
+                                            Payload: <code>TrackingId=xyz'||pg_sleep(10)--</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 13 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-primary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 13: Out-of-Band Interaction
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Comunicación externa mediante DNS o HTTP.
+                                            Herramienta: Burp Collaborator para detección
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 14 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 14: OOB Data Exfiltration
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Extracción de datos fuera de banda.
+                                            Contraseña obtenida: <code>4rhedk3us1dw4dtown71</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 15 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-info">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-info">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 15: Brute Force Password Length
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Determinación de longitud mediante fuerza bruta.
+                                            Resultado: Contraseña de 20 caracteres
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 16 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-warning">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-warning">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 16: Character-by-Character Extraction
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Extracción progresiva de caracteres.
+                                            Herramienta: Burp Intruder (Cluster Bomb Attack)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 17 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-danger">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-danger">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 17: Complete Password Recovery
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Recuperación completa de credenciales.
+                                            Admin: <code>3c485d4edhilrpn6u9mh</code>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lab 18 -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border-left-secondary">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-secondary">
+                                            <i class="fas fa-check-circle text-success"></i> Lab 18: Administrator Access
+                                        </h6>
+                                        <p class="card-text small mb-2">
+                                            Acceso exitoso a cuenta de administrador.
+                                            Estatus: <strong>Lab Completado</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resumen Ejecutivo -->
+                        <div class="alert alert-primary mt-5" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-award text-warning"></i> Logros y Competencias Adquiridas
+                            </h5>
+                            <ul class="mb-0 ps-3">
+                                <li><strong>Dominio de técnicas de SQL Injection:</strong> In-band, Blind (Boolean, Time-based) y Out-of-band</li>
+                                <li><strong>Análisis de vulnerabilidades:</strong> Identificación y explotación de fallos en validación de entradas</li>
+                                <li><strong>Herramientas profesionales:</strong> Manejo avanzado de Burp Suite, Repeater, Intruder y Collaborator</li>
+                                <li><strong>Mitigación y defensa:</strong> Implementación de prepared statements y validación segura de datos</li>
+                                <li><strong>Metodología de pentesting:</strong> Abordaje estructurado en identificación y explotación de vulnerabilidades</li>
+                                <li><strong>Cumplimiento normativo:</strong> Referencia a estándares OWASP Top 10 y buenas prácticas de desarrollo seguro</li>
+                            </ul>
+                        </div>
+
+                        <!-- Botón de Descarga -->
+                        <div class="text-center mt-4">
+                            <a href="act08-Equipo4.pdf" class="btn btn-lg btn-primary" download>
+                                <i class="fas fa-download me-2"></i> Descargar Documento Completo (PDF)
+                            </a>
+                            <p class="small text-muted mt-2">Documento detallado con análisis teórico, procedimientos paso a paso y evidencia fotográfica de todos los laboratorios</p>
                         </div>
                     </div>
                 </div>
