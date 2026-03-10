@@ -625,11 +625,11 @@ function startCountdown() {
 // ══════════════════════════════════════════════════════
 //  START
 // ══════════════════════════════════════════════════════
-document.getElementById('playerName').addEventListener('input', e => {
-    if(e.target.value.trim().length < 2){
-        document.getElementById('btnStart').disabled
-    }
-});
+//document.getElementById('playerName').addEventListener('input', e => {
+//    if(e.target.value.trim().length < 2){
+//        document.getElementById('btnStart').disabled
+//    }
+//});
 
 document.getElementById('btnStart').addEventListener('click', () => {
     playerName = document.getElementById('playerName').value.trim();
