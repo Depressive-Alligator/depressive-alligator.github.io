@@ -52,3 +52,607 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+const QUESTIONS = [
+  {
+    type: 'email',
+    from: 'no-reply@paypa1-secure.com',
+    fromDisplay: 'PayPal Security Team',
+    to: 'usuario@gmail.com',
+    subject: 'Tu cuenta ha sido SUSPENDIDA — Acción requerida',
+    body: `Estimado cliente de PayPal, Hemos detectado actividad inusual en tu cuenta. 
+    Para evitar la suspensión permanente, debes verificar tu información en las próximas <strong>24 horas</strong>.
+    Haz clic en el siguiente botón para verificar tu identidad:`,
+
+    link: 'https://paypa1-secure.com/verify?token=AB9xZ12',
+    btnLabel: 'Verificar mi cuenta ahora',
+    question: '¿Este correo es legítimo o es un intento de phishing?',
+    options: [
+      { label: 'Legítimo', value: 'legit', icon: '✅' },  
+      { label: 'Phishing', value: 'phish', icon: '🎣' }
+      
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Exacto! Es phishing.',
+      wrong: 'Era phishing.',
+      explanation: 'El dominio del remitente es "paypa1-secure.com" (con el número 1 en lugar de la letra l). PayPal siempre envía desde @paypal.com. Además, los mensajes de urgencia extrema ("24 horas", cuenta suspendida) son señales clásicas de phishing.'
+    }
+  },
+  {
+    type: 'url',
+    lockColor: '#2ecc71',
+    lockIcon: 'fa-lock',
+    lockLabel: 'https',
+    url: 'https://accounts.google.com/signin/v2/identifier?hl=es',
+    question: '¿Esta URL corresponde a la página legítima de inicio de sesión de Google?',
+    urlNote: 'Estás a punto de ingresar tus credenciales en esta página.',
+    options: [
+      { label: 'Legítima', value: 'legit', icon: '✅' },
+      { label: 'Phishing', value: 'phish', icon: '🎣' }
+    ],
+    correct: 'legit',
+    feedback: {
+      correct: '¡Correcto! Es legítima.',
+      wrong: 'Era legítima.',
+      explanation: 'El dominio base es "google.com", el protocolo es HTTPS y la ruta "/signin/v2/identifier" es la ruta oficial. El parámetro "hl=es" solo establece el idioma. No hay caracteres extraños ni subdominios sospechosos.'
+    }
+  },
+  {
+    type: 'email',
+    from: 'ceo.martinez@empresa-corp.net',
+    fromDisplay: 'Carlos Martínez (CEO)',
+    to: 'ti.admin@empresa.com',
+    subject: 'Transferencia URGENTE — Confidencial',
+    body: `Hola,
+
+Necesito que realices una transferencia de $47,500 USD a la siguiente cuenta antes de las 3pm de hoy. Es para cerrar un trato importante con un cliente en el extranjero.
+
+<strong>Cuenta destino:</strong> IBAN DE89370400440532013000<br>
+<strong>Banco:</strong> Deutsche Bank Frankfurt
+
+No lo menciones a nadie del equipo todavía, es información confidencial. Confirmame por este correo cuando lo hayas hecho.
+
+Carlos Martínez
+CEO`,
+    question: '¿Qué tipo de ataque es este correo?',
+    options: [
+      { label: 'Comunicación real', value: 'legit', icon: '✅' },
+      { label: 'BEC / CEO Fraud', value: 'bec', icon: '🐋' }
+      
+    ],
+    correct: 'bec',
+    feedback: {
+      correct: '¡Correcto! Es BEC (Business Email Compromise).',
+      wrong: 'Es un ataque BEC (Business Email Compromise).',
+      explanation: 'Las señales de alerta: urgencia extrema, orden de transferencia grande por email, pide confidencialidad y el dominio del remitente es diferente al oficial de la empresa. Este tipo de fraude es conocido como "CEO Fraud" o BEC, y causa pérdidas de miles de millones a nivel global.'
+    }
+  },
+  {
+    type: 'url',
+    lockColor: '#2ecc71',
+    lockIcon: 'fa-lock',
+    lockLabel: 'https',
+    url: 'https://microsoft.com-login.secureauth-portal.ru/office365',
+    question: '¿Es seguro iniciar sesión en esta URL que aparece en un correo de "Microsoft"?',
+    urlNote: 'Un correo de soporte te envió este enlace para renovar tu licencia de Office 365.',
+    options: [
+      { label: 'Phishing', value: 'phish', icon: '🎣' },
+      { label: 'Es de Microsoft', value: 'legit', icon: '✅' }
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Correcto! Es phishing.',
+      wrong: 'Era phishing.',
+      explanation: 'El truco está en que "microsoft.com" aparece como subdominio, pero el dominio real (la parte después del último punto antes de "/") es "secureauth-portal.ru". El dominio base es ruso (.ru) y no tiene nada que ver con Microsoft. Microsoft usa microsoft.com o live.com.'
+    }
+  },
+  {
+    type: 'email',
+    from: 'noreply@linkedin.com',
+    fromDisplay: 'LinkedIn',
+    to: 'tu_correo@outlook.com',
+    subject: 'Ana García quiere conectar contigo en LinkedIn',
+    body: `Hola,
+
+<strong>Ana García</strong> quiere conectar contigo en LinkedIn.
+
+<em>Ana García — Reclutadora Senior en TechCorp México</em>
+
+Tienes 8 invitaciones pendientes sin leer. Para responder, ingresa a tu cuenta:`,
+    link: 'https://www.linkedin.com/in/notifications/',
+    btnLabel: 'Ver invitación de conexión',
+    question: '¿Este correo de LinkedIn es legítimo o phishing?',
+    options: [
+      { label: 'Legítimo', value: 'legit', icon: '✅' },
+      { label: 'Phishing', value: 'phish', icon: '🎣' }
+    ],
+    correct: 'legit',
+    feedback: {
+      correct: '¡Correcto! Es un correo legítimo.',
+      wrong: 'Es un correo legítimo de LinkedIn.',
+      explanation: 'El remitente es "@linkedin.com", el enlace apunta a "www.linkedin.com" (dominio oficial), el contenido es coherente (invitación de conexión) y no hay urgencia ni solicitud de datos. Los correos de LinkedIn tienen esta estructura exacta.'
+    }
+  },
+  {
+    type: 'email',
+    from: 'soporte@banamex-digital.online',
+    fromDisplay: 'Banamex Seguridad',
+    to: 'tu_cuenta@hotmail.com',
+    subject: 'Tu cuenta bancaria ha sido BLOQUEADA',
+    body: `Estimado cliente,
+
+Detectamos múltiples intentos de acceso no autorizado a tu cuenta. Para proteger tus fondos, hemos bloqueado temporalmente tu cuenta.
+
+Para desbloquearla ingresa tus datos bancarios completos incluyendo:
+• Número de tarjeta completo
+• NIP de seguridad
+• Contraseña de banca en línea
+• CVV de tu tarjeta`,
+    link: 'https://banamex-digital.online/desbloqueo-urgente',
+    btnLabel: 'Desbloquear cuenta',
+    question: '¿Deberías ingresar tus datos bancarios aquí?',
+    options: [
+      { label: 'Sí — es mi banco', value: 'legit', icon: '✅' },
+      { label: 'No — es phishing', value: 'phish', icon: '🎣' }
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Perfecto! Ningún banco pide datos así.',
+      wrong: '¡Cuidado! Ningún banco real pide esto.',
+      explanation: 'Banamex.com es el dominio oficial. "banamex-digital.online" es falso. Además, ningún banco legítimo JAMÁS te pedirá tu NIP, CVV y contraseña juntos por correo. Si ves esto, llama directamente al número de tu banco.'
+    }
+  },
+  {
+    type: 'url',
+    lockColor: '#e74c3c',
+    lockIcon: 'fa-lock-open',
+    lockLabel: 'http',
+    url: 'http://amaz0n-prime.offers-today.com/renovar-suscripcion',
+    question: '¿Es seguro renovar tu suscripción Prime desde esta URL?',
+    urlNote: 'Llegaste a este enlace desde un mensaje SMS que decía "Tu Prime vence hoy".',
+    options: [
+      { label: 'No — phishing', value: 'phish', icon: '🎣' },
+      { label: 'Sí — es Amazon', value: 'legit', icon: '✅' }
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Correcto! Es phishing smishing.',
+      wrong: 'Era phishing (Smishing).',
+      explanation: 'Múltiples señales de alerta: HTTP sin S (sin cifrado), "amaz0n" con cero en lugar de o, dominio "offers-today.com" que no es Amazon, y el contexto es SMS con urgencia. Amazon envía desde amazon.com o primevideo.com.'
+    }
+  },
+  {
+    type: 'email',
+    from: 'no-reply@github.com',
+    fromDisplay: 'GitHub',
+    to: 'devuser@gmail.com',
+    subject: '[GitHub] Please verify your email address',
+    body: `Hey @devuser,
+
+Please verify your email address to ensure continued access to your GitHub account.
+
+This link will expire in 48 hours.`,
+    link: 'https://github.com/users/devuser/verify_email_address',
+    btnLabel: 'Verify email address',
+    question: '¿Este correo de verificación de GitHub es legítimo?',
+    options: [
+      { label: 'Es phishing', value: 'phish', icon: '🎣' },
+      { label: 'Sí, es legítimo', value: 'legit', icon: '✅' }
+    ],
+    correct: 'legit',
+    feedback: {
+      correct: '¡Correcto! Es un correo real de GitHub.',
+      wrong: 'Es un correo legítimo de GitHub.',
+      explanation: 'Remitente: no-reply@github.com (oficial). El enlace apunta a github.com (dominio real). El contenido es coherente (verificación de email), no hay urgencia extrema ni solicitud de datos sensibles. GitHub usa exactamente este formato para sus correos de verificación.'
+    }
+  },
+  {
+    type: 'email',
+    from: 'delivery@fedex-tracking-mx.com',
+    fromDisplay: 'FedEx Tracking',
+    to: 'comprador@gmail.com',
+    subject: 'Tu paquete no pudo ser entregado — Reprogramar ahora',
+    body: `Tu paquete #FX-2847-XQ no pudo ser entregado por dirección incorrecta.
+
+Para reprogramar la entrega necesitas confirmar tu dirección y pagar una tarifa de reenvío de <strong>$32 MXN</strong> antes de que el paquete sea devuelto al remitente (72 horas).`,
+    link: 'https://fedex-tracking-mx.com/reprogramar?id=FX2847',
+    btnLabel: 'Reprogramar entrega ($32 MXN)',
+    question: '¿Deberías pagar la tarifa de reenvío en este sitio?',
+    options: [
+      { label: 'No — es phishing', value: 'phish', icon: '🎣' },
+      { label: 'Sí — es FedEx', value: 'legit', icon: '✅' }
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Bien! Es una estafa muy común.',
+      wrong: '¡Es phishing! Esta estafa es muy frecuente.',
+      explanation: 'FedEx usa fedex.com como dominio oficial, no "fedex-tracking-mx.com". Las empresas de paquetería legítimas no cobran tarifas de reenvío sorpresa por correo. Esta es una de las estafas más comunes en temporadas de compras online — nunca pagues sin verificar directamente en fedex.com con tu número de rastreo.'
+    }
+  },
+  {
+    type: 'url',
+    lockColor: '#2ecc71',
+    lockIcon: 'fa-lock',
+    lockLabel: 'https',
+    url: 'https://goog1e-docs.sharepoint-mx.com/shared/document-confidential',
+    question: 'Tu jefe te compartió este enlace a un "documento confidencial de Google Docs". ¿Lo abres?',
+    urlNote: 'El correo llegó a tu cuenta de trabajo con asunto "FW: Propuesta salarial 2025".',
+    options: [
+      { label: 'No — es phishing', value: 'phish', icon: '🎣' },
+      { label: 'Es Google Docs', value: 'legit', icon: '✅' }
+    ],
+    correct: 'phish',
+    feedback: {
+      correct: '¡Excelente ojo! Es un ataque de spear phishing.',
+      wrong: 'Es phishing dirigido (spear phishing).',
+      explanation: 'Google Docs usa docs.google.com. Este enlace usa "goog1e" (con el número 1) y el dominio es "sharepoint-mx.com", no de Google ni Microsoft. El contexto emocional ("propuesta salarial", aparenta ser de tu jefe) es spear phishing: ataques personalizados de alta efectividad.'
+    }
+  }
+];
+
+let playerName = '';
+let currentQ   = 0;
+let score      = 0;
+let correct    = 0;
+let wrong      = 0;
+let timer      = null;
+let timeLeft   = 30;
+let answered   = false;
+const TIMER_MAX = 30;
+const CIRCUMFERENCE = 2 * Math.PI * 22; // r=22
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function buildEmailHTML(q) {
+    let linkHTML = '';
+    if (q.link) {
+        linkHTML = `<div><a class="email-link" onclick="return false;">${q.link}</a></div>`;
+    }
+    if (q.btnLabel) {
+        linkHTML += `<div class="email-btn-fake">${q.btnLabel}</div>`;
+    }
+    return `
+    <div class="email-card">
+        <div class="email-topbar">
+            <div class="email-dot" style="background:#ff5f57"></div>
+            <div class="email-dot" style="background:#febc2e"></div>
+            <div class="email-dot" style="background:#28c840"></div>
+            <span class="email-topbar-title">Bandeja de entrada — Correo recibido</span>
+        </div>
+        <div class="email-body">
+            <div class="email-meta">
+                <div><span class="label">De:</span> ${q.fromDisplay} &lt;${q.from}&gt;</div>
+                <div><span class="label">Para:</span> ${q.to}</div>
+            </div>
+            <div class="email-subject">${q.subject}</div>
+            <div class="email-text">${q.body}${linkHTML}</div>
+        </div>
+    </div>`;
+}
+
+function buildURLHTML(q) {
+    const lockColor = q.lockColor || '#2ecc71';
+    return `
+    <div class="url-bar">
+        <i class="fas ${q.lockIcon} lock-icon" style="color:${lockColor}"></i>
+        <span style="color:${lockColor};font-size:.78rem;margin-right:.3rem">${q.lockLabel}</span>
+        <span class="url-text">${q.url.replace(q.lockLabel+'://','')}</span>
+    </div>
+    ${q.urlNote ? `<p style="font-size:.85rem;opacity:.65;margin-bottom:1.2rem;font-style:italic"><i class="fas fa-circle-info" style="color:var(--teal);margin-right:.4rem"></i>${q.urlNote}</p>` : ''}`;
+}
+
+function updateTimer(t) {
+    const circle = document.getElementById('timerCircle');
+    const num    = document.getElementById('timerNum');
+    const ratio  = t / TIMER_MAX;
+    const offset = CIRCUMFERENCE * (1 - ratio);
+    circle.style.strokeDashoffset = offset;
+    circle.style.stroke = t > 10 ? 'var(--teal)' : t > 5 ? 'var(--yellow)' : 'var(--red)';
+    num.textContent = t;
+    num.style.color = t > 10 ? '#fff' : t > 5 ? 'var(--yellow)' : 'var(--red)';
+}
+
+function startTimer() {
+    timeLeft = TIMER_MAX;
+    updateTimer(timeLeft);
+    timer = setInterval(() => {
+        timeLeft--;
+        updateTimer(timeLeft);
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            if (!answered) handleAnswer(null);
+        }
+    }, 1000);
+}
+
+function stopTimer() { clearInterval(timer); }
+
+// ══════════════════════════════════════════════════════
+//  RENDER QUESTION
+// ══════════════════════════════════════════════════════
+function renderQuestion() {
+    const q = QUESTIONS[currentQ];
+    answered = false;
+
+    // header
+    document.getElementById('qCounter').textContent = `Pregunta ${currentQ+1} / ${QUESTIONS.length}`;
+    document.getElementById('scoreLive').textContent = score;
+    document.getElementById('progressFill').style.width = `${(currentQ/QUESTIONS.length)*100}%`;
+
+    // content
+    document.getElementById('qContent').innerHTML =
+        q.type === 'email' ? buildEmailHTML(q) : buildURLHTML(q);
+
+    document.getElementById('qText').textContent = q.question;
+    document.getElementById('feedbackWrap').innerHTML = '';
+    document.getElementById('btnNext').classList.remove('visible');
+
+    // options
+    const wrap = document.getElementById('optionsWrap');
+    wrap.innerHTML = '';
+    q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.dataset.value = opt.value;
+        btn.innerHTML = `<span class="opt-icon">${opt.icon}</span> ${opt.label}`;
+        btn.addEventListener('click', () => handleAnswer(opt.value));
+        wrap.appendChild(btn);
+    });
+
+    startTimer();
+}
+
+// ══════════════════════════════════════════════════════
+//  HANDLE ANSWER
+// ══════════════════════════════════════════════════════
+function handleAnswer(chosen) {
+    if (answered) return;
+    answered = true;
+    stopTimer();
+
+    const q = QUESTIONS[currentQ];
+    const isCorrect = chosen === q.correct;
+    const pts = isCorrect ? Math.max(10, timeLeft * 5) : 0;
+
+    if (isCorrect) { score += pts; correct++; }
+    else            { wrong++; }
+
+    document.getElementById('scoreLive').textContent = score;
+
+    // mark buttons
+    document.querySelectorAll('.opt-btn').forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.value === q.correct) btn.classList.add('correct');
+        else if (btn.dataset.value === chosen && !isCorrect) btn.classList.add('wrong');
+    });
+
+    // feedback
+    const fb = document.getElementById('feedbackWrap');
+    fb.innerHTML = `
+    <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+        <div>
+            <div class="fb-title">${isCorrect ? q.feedback.correct : q.feedback.wrong}</div>
+            <div class="fb-body">${q.feedback.explanation}</div>
+            ${isCorrect ? `<div style="margin-top:.4rem;font-size:.78rem;color:var(--teal);font-weight:700">+${pts} puntos (${timeLeft}s restantes)</div>` : ''}
+        </div>
+    </div>`;
+
+    if (!isCorrect) fb.classList.add('shake');
+
+    document.getElementById('btnNext').classList.add('visible');
+}
+
+// ══════════════════════════════════════════════════════
+//  NEXT QUESTION / FINISH
+// ══════════════════════════════════════════════════════
+document.getElementById('btnNext').addEventListener('click', () => {
+    currentQ++;
+    if (currentQ < QUESTIONS.length) {
+        renderQuestion();
+    } else {
+        finishQuiz();
+    }
+});
+
+// ══════════════════════════════════════════════════════
+//  FINISH
+// ══════════════════════════════════════════════════════
+async function finishQuiz() {
+    const pct = Math.round((correct / QUESTIONS.length) * 100);
+
+    // save to storage
+    await saveScore(playerName, score, pct, correct);
+
+    // update UI
+    document.getElementById('scoreNum').innerHTML = `${pct}<span>%</span>`;
+    document.getElementById('statCorrect').textContent = correct;
+    document.getElementById('statWrong').textContent   = wrong;
+    document.getElementById('statPts').textContent     = score;
+
+    const msgs = [
+        [0,  30,  'Rango: Inexperto', 'El phishing es difícil de detectar, no te preocupes, tienes el conocimiento o el talento en la sangre... solo falta que fluya.'],
+        [31, 60,  'Rango: Iniciante', 'Tienes intuición, pero como que aún te falla, sigue practicando.'],
+        [61, 80,  'Rango: Intermedio', 'Tienes buen ojo. deja el tiktok y ponle más atención a esto para ser realmente bueno.'],
+        [81, 90,  'Rango: Avanzado', 'Vaya, que resultado tan sobresaliente, una calificación mayor al promedio, bien hecho.'],
+        [91, 100, 'Rango: Experto', '¡Se ve que si le sabes luisito! sabes bastante, pero no te confíes, siempre hay que estar alerta.']
+    ];
+    const [, , title, msg] = msgs.find(([min, max]) => pct >= min && pct <= max);
+    document.getElementById('resultsTitle').textContent = title;
+    document.getElementById('resultsMsg').textContent   = msg;
+
+    // animated ring
+    drawScoreRing(pct);
+
+    // leaderboard
+    renderLeaderboard(playerName);
+
+    show('screen-results');
+    document.getElementById('progressFill').style.width = '100%';
+}
+
+// ══════════════════════════════════════════════════════
+//  SCORE RING (Canvas)
+// ══════════════════════════════════════════════════════
+function drawScoreRing(pct) {
+    const canvas = document.getElementById('scoreCanvas');
+    const ctx    = canvas.getContext('2d');
+    const cx = 85, cy = 85, r = 70, lw = 10;
+    const color = pct >= 70 ? '#2ecc71' : pct >= 40 ? '#f39c12' : '#e74c3c';
+
+    ctx.clearRect(0, 0, 170, 170);
+    // track
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,.07)';
+    ctx.lineWidth = lw;
+    ctx.stroke();
+
+    // fill animation
+    let current = 0;
+    const step  = pct / 60;
+    const draw  = () => {
+        ctx.clearRect(0, 0, 170, 170);
+        // track
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,.07)';
+        ctx.lineWidth = lw; ctx.stroke();
+        // fill
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + (Math.PI*2)*(current/100));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.stroke();
+        document.getElementById('scoreNum').innerHTML = `${Math.round(current)}<span>%</span>`;
+        if (current < pct) { current = Math.min(current + step, pct); requestAnimationFrame(draw); }
+    };
+    draw();
+}
+
+// ══════════════════════════════════════════════════════
+//  STORAGE — LEADERBOARD
+// ══════════════════════════════════════════════════════
+async function saveScore(name, pts, pct, corr) {
+    let entries = [];
+    try {
+        const res = await window.storage.get('phishing-quiz-scores', true);
+        if (res) entries = JSON.parse(res.value);
+    } catch(e) {}
+
+    entries.push({
+        name, pts, pct, corr,
+        date: new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' })
+    });
+    entries.sort((a,b) => b.pts - a.pts || b.pct - a.pct);
+    entries = entries.slice(0, 50); // keep top 50
+
+    try { await window.storage.set('phishing-quiz-scores', JSON.stringify(entries), true); }
+    catch(e) {}
+
+    return entries;
+}
+
+async function renderLeaderboard(myName) {
+    let entries = [];
+    try {
+        const res = await window.storage.get('phishing-quiz-scores', true);
+        if (res) entries = JSON.parse(res.value);
+    } catch(e) {}
+
+    const lb = document.getElementById('leaderboard');
+    if (!entries.length) {
+        lb.innerHTML = '<div class="lb-empty"><i class="fas fa-ghost" style="font-size:2rem;margin-bottom:.5rem;display:block"></i>Aún no hay participantes. ¡Sé el primero!</div>';
+        return;
+    }
+
+    const medals = ['🥇','🥈','🥉'];
+    const rankClass = ['gold','silver','bronze'];
+    let html = `<table class="lb-table">
+        <thead><tr>
+            <th>#</th><th>Participante</th><th>% Aciertos</th><th>Puntos</th><th>Fecha</th>
+        </tr></thead><tbody>`;
+
+    entries.forEach((e, i) => {
+        const isMe = e.name === myName && i === entries.findIndex(x => x.name === myName);
+        const rankIcon = i < 3 ? medals[i] : '';
+        const rc       = i < 3 ? rankClass[i] : '';
+        html += `<tr${isMe ? ' class="me"' : ''}>
+            <td class="rank ${rc}">${rankIcon || (i+1)}</td>
+            <td>${escapeHTML(e.name)}${isMe ? ' <span style="color:var(--teal);font-size:.72rem">(tú)</span>':''}</td>
+            <td class="lb-pct">${e.pct}%</td>
+            <td>${e.pts}</td>
+            <td class="lb-date">${e.date}</td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    lb.innerHTML = html;
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════════════
+//  COUNTDOWN
+// ══════════════════════════════════════════════════════
+function startCountdown() {
+    show('screen-countdown');
+    let n = 3;
+    const el = document.getElementById('cdNum');
+    el.textContent = n;
+
+    const tick = () => {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = 'pop .7s ease';
+        el.textContent = n;
+        if (n === 0) {
+            setTimeout(() => { show('screen-question'); renderQuestion(); }, 600);
+            return;
+        }
+        n--;
+        setTimeout(tick, 900);
+    };
+    tick();
+}
+
+// ══════════════════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════════════════
+document.getElementById('playerName').addEventListener('input', e => {
+    document.getElementById('btnStart').disabled = e.target.value.trim().length < 2;
+});
+
+document.getElementById('btnStart').addEventListener('click', () => {
+    playerName = document.getElementById('playerName').value.trim();
+    currentQ = 0; score = 0; correct = 0; wrong = 0;
+    startCountdown();
+});
+
+document.getElementById('btnRetry').addEventListener('click', () => {
+    currentQ = 0; score = 0; correct = 0; wrong = 0;
+    startCountdown();
+});
+
+// pre-load leaderboard on landing (just to show count)
+(async () => {
+    try {
+        const res = await window.storage.get('phishing-quiz-scores', true);
+        if (res) {
+            const entries = JSON.parse(res.value);
+            if (entries.length) {
+                const p = document.querySelector('.info-pills');
+                const pill = document.createElement('div');
+                pill.className = 'pill';
+                pill.innerHTML = `<i class="fas fa-users"></i> ${entries.length} participante${entries.length>1?'s':''}`;
+                p.appendChild(pill);
+            }
+        }
+    } catch(e) {}
+})();
