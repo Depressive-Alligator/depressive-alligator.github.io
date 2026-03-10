@@ -626,7 +626,9 @@ function startCountdown() {
 //  START
 // ══════════════════════════════════════════════════════
 document.getElementById('playerName').addEventListener('input', e => {
-    document.getElementById('btnStart').disabled = e.target.value.trim().length < 2;
+    if(e.target.value.trim().length < 2){
+        document.getElementById('btnStart').disabled
+    }
 });
 
 document.getElementById('btnStart').addEventListener('click', () => {
