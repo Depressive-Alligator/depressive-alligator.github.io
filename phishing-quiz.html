@@ -1015,14 +1015,15 @@
                 }
 
                 async function fetchScoresFromServer() {
-                    const res = await fetch(
-                        'https://portafolio-cno-default-rtdb.firebaseio.com/phishing-quiz-scores.json',
-                        { cache: 'no-store' }
-                    );
+                    const url = `https://portafolio-cno-default-rtdb.firebaseio.com/phishing-quiz-scores.json?t=${Date.now()}`;
+                    const res = await fetch(url, { cache: 'no-store' });
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     const data = await res.json();
+                    console.log('[Leaderboard] Raw data from Firebase:', data);
                     if (!data) return [];
-                    return Object.values(data)
+                    const entries = Object.values(data);
+                    console.log('[Leaderboard] Total entries:', entries.length);
+                    return entries
                         .sort((a, b) => b.pts - a.pts || b.pct - a.pct)
                         .slice(0, 50);
                 }
