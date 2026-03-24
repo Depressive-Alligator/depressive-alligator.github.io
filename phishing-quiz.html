@@ -1014,16 +1014,26 @@
                     }
                 }
 
+                async function fetchScoresFromServer() {
+                    const res = await fetch(
+                        'https://portafolio-cno-default-rtdb.firebaseio.com/phishing-quiz-scores.json',
+                        { cache: 'no-store' }
+                    );
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const data = await res.json();
+                    if (!data) return [];
+                    return Object.values(data)
+                        .sort((a, b) => b.pts - a.pts || b.pct - a.pct)
+                        .slice(0, 50);
+                }
+
                 async function renderLeaderboard(myName) {
                     const lb = document.getElementById('leaderboard');
                     lb.innerHTML = '<div class="lb-empty"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:.5rem;display:block"></i>Cargando puntajes...</div>';
 
                     let entries = [];
                     try {
-                        const snapshot = await db.ref('phishing-quiz-scores').once('value');
-                        snapshot.forEach(child => entries.push(child.val()));
-                        entries.sort((a, b) => b.pts - a.pts || b.pct - a.pct);
-                        entries = entries.slice(0, 50);
+                        entries = await fetchScoresFromServer();
                     } catch(e) {
                         lb.innerHTML = '<div class="lb-empty"><i class="fas fa-triangle-exclamation" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--yellow)"></i>No se pudo cargar el leaderboard.</div>';
                         return;
@@ -1106,13 +1116,12 @@
                 // pre-load leaderboard on landing (just to show count)
                 (async () => {
                     try {
-                        const snapshot = await db.ref('phishing-quiz-scores').once('value');
-                        const count = snapshot.numChildren();
-                        if (count > 0) {
+                        const entries = await fetchScoresFromServer();
+                        if (entries.length > 0) {
                             const p = document.querySelector('.info-pills');
                             const pill = document.createElement('div');
                             pill.className = 'pill';
-                            pill.innerHTML = `<i class="fas fa-users"></i> ${count} participante${count > 1 ? 's' : ''}`;
+                            pill.innerHTML = `<i class="fas fa-users"></i> ${entries.length} participante${entries.length > 1 ? 's' : ''}`;
                             p.appendChild(pill);
                         }
                     } catch(e) {}
