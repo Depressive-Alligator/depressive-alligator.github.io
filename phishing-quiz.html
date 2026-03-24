@@ -6,6 +6,22 @@
     <title>Phishing Quiz - 171580</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Firebase SDK (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHU1eGPoHGQuRR3t0ma0uhcV3VojsKVOM",
+            authDomain: "portafolio-cno.firebaseapp.com",
+            databaseURL: "https://portafolio-cno-default-rtdb.firebaseio.com",
+            projectId: "portafolio-cno",
+            storageBucket: "portafolio-cno.firebasestorage.app",
+            messagingSenderId: "975060669814",
+            appId: "1:975060669814:web:43a3764591f02325f49657"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+    </script>
     <style>
         :root {
             --teal:    #1abc9c;
@@ -987,31 +1003,31 @@
                 //  STORAGE — LEADERBOARD
                 // ══════════════════════════════════════════════════════
                 async function saveScore(name, pts, pct, corr) {
-                    let entries = [];
                     try {
-                        const res = await window.storage.get('phishing-quiz-scores', true);
-                        if (res) entries = JSON.parse(res.value);
-                    } catch(e) {}
-
-                    entries.push({
-                        name, pts, pct, corr,
-                        date: new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' })
-                    });
-                    entries.sort((a,b) => b.pts - a.pts || b.pct - a.pct);
-                    entries = entries.slice(0, 50); // keep top 50
-
-                    try { await window.storage.set('phishing-quiz-scores', JSON.stringify(entries), true); }
-                    catch(e) {}
-
-                    return entries;
+                        await db.ref('phishing-quiz-scores').push({
+                            name, pts, pct, corr,
+                            date: new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }),
+                            ts: Date.now()
+                        });
+                    } catch(e) {
+                        console.error('Error guardando puntaje:', e);
+                    }
                 }
 
                 async function renderLeaderboard(myName) {
+                    const lb = document.getElementById('leaderboard');
+                    lb.innerHTML = '<div class="lb-empty"><i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:.5rem;display:block"></i>Cargando puntajes...</div>';
+
                     let entries = [];
                     try {
-                        const res = await window.storage.get('phishing-quiz-scores', true);
-                        if (res) entries = JSON.parse(res.value);
-                    } catch(e) {}
+                        const snapshot = await db.ref('phishing-quiz-scores')
+                            .orderByChild('pts').limitToLast(50).once('value');
+                        snapshot.forEach(child => entries.push(child.val()));
+                        entries.sort((a, b) => b.pts - a.pts || b.pct - a.pct);
+                    } catch(e) {
+                        lb.innerHTML = '<div class="lb-empty"><i class="fas fa-triangle-exclamation" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--yellow)"></i>No se pudo cargar el leaderboard.</div>';
+                        return;
+                    }
 
                     const lb = document.getElementById('leaderboard');
                     if (!entries.length) {
@@ -1091,16 +1107,14 @@
                 // pre-load leaderboard on landing (just to show count)
                 (async () => {
                     try {
-                        const res = await window.storage.get('phishing-quiz-scores', true);
-                        if (res) {
-                            const entries = JSON.parse(res.value);
-                            if (entries.length) {
-                                const p = document.querySelector('.info-pills');
-                                const pill = document.createElement('div');
-                                pill.className = 'pill';
-                                pill.innerHTML = `<i class="fas fa-users"></i> ${entries.length} participante${entries.length>1?'s':''}`;
-                                p.appendChild(pill);
-                            }
+                        const snapshot = await db.ref('phishing-quiz-scores').once('value');
+                        const count = snapshot.numChildren();
+                        if (count > 0) {
+                            const p = document.querySelector('.info-pills');
+                            const pill = document.createElement('div');
+                            pill.className = 'pill';
+                            pill.innerHTML = `<i class="fas fa-users"></i> ${count} participante${count > 1 ? 's' : ''}`;
+                            p.appendChild(pill);
                         }
                     } catch(e) {}
                 })();
