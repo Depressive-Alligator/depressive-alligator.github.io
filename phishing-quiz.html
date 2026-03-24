@@ -399,6 +399,33 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--dark); }
         ::-webkit-scrollbar-thumb { background: var(--dark-3); border-radius: 99px; }
+
+        /* ─── ANALYTICS ─── */
+        .an-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: .9rem; margin-bottom: 1.5rem;
+        }
+        .an-card {
+            background: var(--dark-2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1rem 1.1rem;
+            display: flex; align-items: flex-start; gap: .9rem;
+        }
+        .an-card-icon { font-size: 1.4rem; padding-top: .1rem; flex-shrink: 0; }
+        .an-card-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; opacity: .55; margin-bottom: .2rem; }
+        .an-card-val { font-size: 1.15rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+        .an-card-sub { font-size: .75rem; opacity: .5; margin-top: .2rem; line-height: 1.4; }
+        .an-bars-title { font-size: .82rem; font-weight: 700; margin-bottom: .7rem; }
+        .an-bars { display: flex; flex-direction: column; gap: .45rem; }
+        .an-bar-row {
+            display: flex; align-items: center; gap: .7rem;
+            padding: .3rem .6rem; border-radius: 6px;
+            transition: background .2s;
+        }
+        .an-bar-row.hardest { background: rgba(231,76,60,.07); border: 1px solid rgba(231,76,60,.2); }
+        .an-bar-label { font-family: 'JetBrains Mono', monospace; font-size: .75rem; width: 2rem; flex-shrink: 0; opacity: .6; }
+        .an-bar-track { flex: 1; background: var(--dark-3); border-radius: 99px; height: 7px; overflow: hidden; }
+        .an-bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+        .an-bar-pct { font-family: 'JetBrains Mono', monospace; font-size: .75rem; font-weight: 700; width: 2.5rem; text-align: right; flex-shrink: 0; }
     </style>
     
 </head>
@@ -505,6 +532,9 @@
                     </div>
                 </div>
             </div>
+
+            <div class="lb-title"><i class="fas fa-chart-line"></i> Análisis Estadístico</div>
+            <div id="analyticsPanel" style="margin-bottom:2.5rem"></div>
 
             <div class="lb-title"><i class="fas fa-trophy"></i> Tabla de Puntuaciones</div>
             <div class="lb-wrap">
@@ -755,14 +785,15 @@
                 }
                 ];
 
-                let playerName = '';
-                let currentQ   = 0;
-                let score      = 0;
-                let correct    = 0;
-                let wrong      = 0;
-                let timer      = null;
-                let timeLeft   = 30;
-                let answered   = false;
+                let playerName   = '';
+                let currentQ    = 0;
+                let score       = 0;
+                let correct     = 0;
+                let wrong       = 0;
+                let timer       = null;
+                let timeLeft    = 30;
+                let answered    = false;
+                let questionLog = []; // {qIndex, correct, timeUsed}
                 const TIMER_MAX = 30;
                 const CIRCUMFERENCE = 2 * Math.PI * 22; // r=22
 
@@ -888,6 +919,9 @@
                     if (isCorrect) { score += pts; correct++; }
                     else            { wrong++; }
 
+                    // log this question's result
+                    questionLog.push({ qIndex: currentQ, correct: isCorrect, timeUsed: TIMER_MAX - timeLeft });
+
                     document.getElementById('scoreLive').textContent = score;
 
                     // mark buttons
@@ -932,7 +966,7 @@
                     const pct = Math.round((correct / QUESTIONS.length) * 100);
 
                     // save to storage
-                    await saveScore(playerName, score, pct, correct);
+                    await saveScore(playerName, score, pct, correct, questionLog);
 
                     // update UI
                     document.getElementById('scoreNum').innerHTML = `${pct}<span>%</span>`;
@@ -955,7 +989,10 @@
                     drawScoreRing(pct);
 
                     // leaderboard
-                    await renderLeaderboard(playerName);
+                    const allEntries = await renderLeaderboard(playerName);
+
+                    // análisis estadístico
+                    computeAndRenderAnalytics(allEntries, questionLog);
 
                     show('screen-results');
                     document.getElementById('progressFill').style.width = '100%';
@@ -1002,12 +1039,13 @@
                 // ══════════════════════════════════════════════════════
                 //  STORAGE — LEADERBOARD
                 // ══════════════════════════════════════════════════════
-                async function saveScore(name, pts, pct, corr) {
+                async function saveScore(name, pts, pct, corr, qLog) {
                     try {
                         await db.ref('phishing-quiz-scores').push({
                             name, pts, pct, corr,
                             date: new Date().toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }),
-                            ts: Date.now()
+                            ts: Date.now(),
+                            questionLog: qLog
                         });
                     } catch(e) {
                         console.error('Error guardando puntaje:', e);
@@ -1037,12 +1075,12 @@
                         entries = await fetchScoresFromServer();
                     } catch(e) {
                         lb.innerHTML = '<div class="lb-empty"><i class="fas fa-triangle-exclamation" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--yellow)"></i>No se pudo cargar el leaderboard.</div>';
-                        return;
+                        return [];
                     }
 
                     if (!entries.length) {
                         lb.innerHTML = '<div class="lb-empty"><i class="fas fa-ghost" style="font-size:2rem;margin-bottom:.5rem;display:block"></i>Aún no hay participantes. ¡Sé el primero!</div>';
-                        return;
+                        return [];
                     }
 
                     const medals = ['🥇','🥈','🥉'];
@@ -1066,6 +1104,92 @@
                     });
                     html += '</tbody></table>';
                     lb.innerHTML = html;
+                    return entries;
+                }
+
+                function computeAndRenderAnalytics(allEntries, myLog) {
+                    const panel = document.getElementById('analyticsPanel');
+                    if (!panel) return;
+
+                    const N = QUESTIONS.length;
+
+                    // ── Conteos globales por pregunta ──
+                    const failCount  = new Array(N).fill(0);
+                    const totalCount = new Array(N).fill(0);
+                    let globalTimeSum = 0, globalTimeN = 0;
+
+                    allEntries.forEach(entry => {
+                        if (!entry.questionLog) return;
+                        entry.questionLog.forEach(q => {
+                            if (q.qIndex < N) {
+                                totalCount[q.qIndex]++;
+                                if (!q.correct) failCount[q.qIndex]++;
+                                globalTimeSum += q.timeUsed;
+                                globalTimeN++;
+                            }
+                        });
+                    });
+
+                    // Pregunta más fallida
+                    const failRates  = failCount.map((f, i) => totalCount[i] > 0 ? f / totalCount[i] : 0);
+                    const hardestIdx = failRates.indexOf(Math.max(...failRates));
+                    const hardestPct = Math.round(failRates[hardestIdx] * 100);
+                    const hardestTxt = QUESTIONS[hardestIdx] ? QUESTIONS[hardestIdx].question : '—';
+
+                    // Tiempo promedio global
+                    const avgGlobal = globalTimeN > 0 ? (globalTimeSum / globalTimeN).toFixed(1) : '—';
+
+                    // Tiempo promedio personal
+                    const myAvg = myLog.length > 0
+                        ? (myLog.reduce((s, q) => s + q.timeUsed, 0) / myLog.length).toFixed(1)
+                        : '—';
+
+                    // ── Barra de tasa de fallo por pregunta ──
+                    const barsHTML = failRates.map((r, i) => {
+                        const pct   = Math.round(r * 100);
+                        const color = pct >= 70 ? 'var(--red)' : pct >= 40 ? 'var(--yellow)' : 'var(--green)';
+                        const isHardest = i === hardestIdx;
+                        return `
+                        <div class="an-bar-row${isHardest ? ' hardest' : ''}">
+                            <div class="an-bar-label">P${i+1}</div>
+                            <div class="an-bar-track">
+                                <div class="an-bar-fill" style="width:${pct}%;background:${color}"></div>
+                            </div>
+                            <div class="an-bar-pct" style="color:${color}">${totalCount[i] > 0 ? pct+'%' : '—'}</div>
+                        </div>`;
+                    }).join('');
+
+                    panel.innerHTML = `
+                    <div class="an-cards">
+                        <div class="an-card">
+                            <div class="an-card-icon"><i class="fas fa-skull-crossbones" style="color:var(--red)"></i></div>
+                            <div class="an-card-body">
+                                <div class="an-card-label">Pregunta más fallida</div>
+                                <div class="an-card-val" style="color:var(--red)">${hardestPct}% de fallos</div>
+                                <div class="an-card-sub">"${hardestTxt}"</div>
+                            </div>
+                        </div>
+                        <div class="an-card">
+                            <div class="an-card-icon"><i class="fas fa-globe" style="color:var(--teal)"></i></div>
+                            <div class="an-card-body">
+                                <div class="an-card-label">Tiempo promedio global</div>
+                                <div class="an-card-val" style="color:var(--teal)">${avgGlobal}s por pregunta</div>
+                                <div class="an-card-sub">basado en ${globalTimeN} respuestas</div>
+                            </div>
+                        </div>
+                        <div class="an-card">
+                            <div class="an-card-icon"><i class="fas fa-user-clock" style="color:var(--yellow)"></i></div>
+                            <div class="an-card-body">
+                                <div class="an-card-label">Tu tiempo promedio</div>
+                                <div class="an-card-val" style="color:var(--yellow)">${myAvg}s por pregunta</div>
+                                <div class="an-card-sub">en esta partida</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="an-bars-title"><i class="fas fa-chart-bar" style="color:var(--teal);margin-right:.4rem"></i>Tasa de fallo por pregunta (global)</div>
+                    <div class="an-bars">${barsHTML}</div>
+                    `;
                 }
 
                 function escapeHTML(str) {
@@ -1105,12 +1229,12 @@
 
                 document.getElementById('btnStart').addEventListener('click', () => {
                     playerName = document.getElementById('playerName').value.trim();
-                    currentQ = 0; score = 0; correct = 0; wrong = 0;
+                    currentQ = 0; score = 0; correct = 0; wrong = 0; questionLog = [];
                     startCountdown();
                 });
 
                 document.getElementById('btnRetry').addEventListener('click', () => {
-                    currentQ = 0; score = 0; correct = 0; wrong = 0;
+                    currentQ = 0; score = 0; correct = 0; wrong = 0; questionLog = [];
                     startCountdown();
                 });
 
