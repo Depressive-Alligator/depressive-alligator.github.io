@@ -434,7 +434,7 @@
                 <label class="form-label" for="playerName">Tu nombre o alias</label>
                 <input class="form-input" id="playerName" type="text" maxlength="30"
                     placeholder="Ej. hacker_ético_777" autocomplete="off" />
-                <button class="btn-start" id="btnStart" >
+                <button class="btn-start" id="btnStart" disabled>
                     <i class="fas fa-play me-2"></i> Comenzar quiz
                 </button>
             </div>
@@ -955,7 +955,7 @@
                     drawScoreRing(pct);
 
                     // leaderboard
-                    renderLeaderboard(playerName);
+                    await renderLeaderboard(playerName);
 
                     show('screen-results');
                     document.getElementById('progressFill').style.width = '100%';
@@ -1020,10 +1020,10 @@
 
                     let entries = [];
                     try {
-                        const snapshot = await db.ref('phishing-quiz-scores')
-                            .orderByChild('pts').limitToLast(50).once('value');
+                        const snapshot = await db.ref('phishing-quiz-scores').once('value');
                         snapshot.forEach(child => entries.push(child.val()));
                         entries.sort((a, b) => b.pts - a.pts || b.pct - a.pct);
+                        entries = entries.slice(0, 50);
                     } catch(e) {
                         lb.innerHTML = '<div class="lb-empty"><i class="fas fa-triangle-exclamation" style="font-size:2rem;margin-bottom:.5rem;display:block;color:var(--yellow)"></i>No se pudo cargar el leaderboard.</div>';
                         return;
