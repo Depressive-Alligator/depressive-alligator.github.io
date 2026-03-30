@@ -426,6 +426,193 @@
         .an-bar-track { flex: 1; background: var(--dark-3); border-radius: 99px; height: 7px; overflow: hidden; }
         .an-bar-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
         .an-bar-pct { font-family: 'JetBrains Mono', monospace; font-size: .75rem; font-weight: 700; width: 2.5rem; text-align: right; flex-shrink: 0; }
+
+        /* ─── FLOATING SIDE SCOREBOARD ─── */
+        #side-scoreboard {
+            position: fixed;
+            top: 62px;
+            right: 20px;
+            width: 268px;
+            max-height: calc(100vh - 82px);
+            background: var(--dark-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,.45);
+            transition: opacity .3s ease, transform .3s ease;
+        }
+        #side-scoreboard.ss-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(14px);
+        }
+        .ss-header {
+            padding: .7rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--dark-3);
+            flex-shrink: 0;
+        }
+        .ss-header-title {
+            font-size: .78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: var(--teal);
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+        }
+        .ss-count-badge {
+            font-size: .68rem;
+            opacity: .5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .ss-body {
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+        }
+        .ss-row {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .5rem .9rem;
+            font-size: .81rem;
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+        .ss-row:last-child { border-bottom: none; }
+        .ss-row.ss-me { background: rgba(26,188,156,.09); }
+        .ss-row:hover { background: rgba(255,255,255,.03); }
+        .ss-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: .76rem;
+            width: 1.6rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .ss-rank.gold   { color: #f1c40f; }
+        .ss-rank.silver { color: #bdc3c7; }
+        .ss-rank.bronze { color: #e67e22; }
+        .ss-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: .82rem;
+        }
+        .ss-pts {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--teal);
+            font-size: .76rem;
+            flex-shrink: 0;
+        }
+        .ss-pct {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            opacity: .45;
+            flex-shrink: 0;
+            width: 2.5rem;
+            text-align: right;
+        }
+        .ss-empty {
+            text-align: center;
+            padding: 1.8rem 1rem;
+            font-size: .82rem;
+            opacity: .4;
+            line-height: 1.6;
+        }
+        .ss-footer {
+            padding: .45rem 1rem;
+            border-top: 1px solid var(--border);
+            font-size: .68rem;
+            opacity: .3;
+            text-align: center;
+            flex-shrink: 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ─── FAB (mobile/tablet) ─── */
+        #ss-fab {
+            position: fixed;
+            bottom: 1.4rem;
+            right: 1.4rem;
+            width: 52px;
+            height: 52px;
+            background: var(--teal);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.15rem;
+            cursor: pointer;
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 22px rgba(26,188,156,.45);
+            transition: all .2s;
+        }
+        #ss-fab:hover { background: var(--teal-d); transform: scale(1.08); }
+        #ss-fab.ss-hidden { display: none !important; }
+        .ss-fab-badge {
+            position: absolute;
+            top: -3px; right: -3px;
+            background: var(--yellow);
+            color: #000;
+            border-radius: 50%;
+            width: 17px; height: 17px;
+            font-size: .58rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* overlay for mobile drawer */
+        #ss-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            z-index: 49;
+        }
+        #ss-overlay.active { display: block; }
+
+        /* ─── RESPONSIVE BREAKPOINTS ─── */
+        @media (max-width: 1199px) {
+            #side-scoreboard {
+                top: 62px;
+                right: 0;
+                width: 285px;
+                max-height: calc(100vh - 62px);
+                border-radius: var(--radius) 0 0 var(--radius);
+                border-right: none;
+                transform: translateX(100%);
+                opacity: 1;
+            }
+            #side-scoreboard.ss-hidden {
+                transform: translateX(100%);
+                opacity: 1;
+                display: none;
+            }
+            #side-scoreboard.mobile-open {
+                transform: translateX(0) !important;
+                opacity: 1 !important;
+                pointer-events: all !important;
+            }
+            #ss-fab { display: flex; }
+        }
+        @media (min-width: 1200px) {
+            #ss-fab { display: none !important; }
+            #ss-overlay { display: none !important; }
+        }
     </style>
     
 </head>
@@ -439,6 +626,33 @@
             <i class="fas fa-arrow-left me-1"></i> Volver al portafolio
         </a>
     </nav>
+
+    <!-- ═══════════════════════════════════════════════
+         FLOATING SIDE SCOREBOARD (visible en landing y quiz)
+         ═══════════════════════════════════════════════ -->
+    <div id="side-scoreboard" class="ss-hidden">
+        <div class="ss-header">
+            <div class="ss-header-title">
+                <i class="fas fa-trophy" style="color:var(--yellow)"></i>
+                Ranking Global
+            </div>
+            <span class="ss-count-badge" id="ss-count"></span>
+        </div>
+        <div class="ss-body" id="ss-body">
+            <div class="ss-empty">
+                <i class="fas fa-spinner fa-spin" style="font-size:1.3rem;display:block;margin-bottom:.5rem"></i>
+                Cargando...
+            </div>
+        </div>
+        <div class="ss-footer" id="ss-footer">actualizado al cargar</div>
+    </div>
+
+    <!-- FAB toggle para móvil/tablet -->
+    <div id="ss-overlay"></div>
+    <button id="ss-fab" class="ss-hidden" title="Ver ranking global" aria-label="Abrir ranking global">
+        <i class="fas fa-trophy"></i>
+        <span class="ss-fab-badge" id="ss-fab-badge" style="display:none"></span>
+    </button>
 
     <div id="app">
 
@@ -800,10 +1014,83 @@
                 // ══════════════════════════════════════════════════════
                 //  HELPERS
                 // ══════════════════════════════════════════════════════
+                // Screens where the floating scoreboard should be visible
+                const SS_VISIBLE_ON = new Set(['screen-landing', 'screen-question']);
+
                 function show(id) {
                     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
                     document.getElementById(id).classList.add('active');
+                    updateSideScoreboardVisibility(id);
                 }
+
+                function updateSideScoreboardVisibility(screenId) {
+                    const panel = document.getElementById('side-scoreboard');
+                    const fab   = document.getElementById('ss-fab');
+                    const overlay = document.getElementById('ss-overlay');
+                    const show  = SS_VISIBLE_ON.has(screenId);
+                    if (show) {
+                        panel.classList.remove('ss-hidden');
+                        fab.classList.remove('ss-hidden');
+                    } else {
+                        panel.classList.add('ss-hidden');
+                        panel.classList.remove('mobile-open');
+                        fab.classList.add('ss-hidden');
+                        overlay.classList.remove('active');
+                    }
+                }
+
+                // ── Side scoreboard render (compact) ──
+                async function renderSideScoreboard() {
+                    const body   = document.getElementById('ss-body');
+                    const count  = document.getElementById('ss-count');
+                    const footer = document.getElementById('ss-footer');
+                    try {
+                        const entries = await fetchScoresFromServer();
+                        count.textContent = entries.length ? `${entries.length} participantes` : '';
+                        if (!entries.length) {
+                            body.innerHTML = '<div class="ss-empty"><i class="fas fa-ghost" style="font-size:1.5rem;display:block;margin-bottom:.5rem"></i>Sé el primero<br>en jugar</div>';
+                            return;
+                        }
+                        const medals = ['🥇','🥈','🥉'];
+                        const rankClasses = ['gold','silver','bronze'];
+                        const top = entries.slice(0, 15);
+                        body.innerHTML = top.map((e, i) => {
+                            const isMe = playerName && e.name === playerName;
+                            const rc = i < 3 ? rankClasses[i] : '';
+                            const icon = i < 3 ? medals[i] : (i + 1);
+                            return `<div class="ss-row${isMe ? ' ss-me' : ''}">
+                                <div class="ss-rank ${rc}">${icon}</div>
+                                <div class="ss-name" title="${escapeHTML(e.name)}">${escapeHTML(e.name)}</div>
+                                <div class="ss-pct">${e.pct}%</div>
+                                <div class="ss-pts">${e.pts}pt</div>
+                            </div>`;
+                        }).join('');
+                        // update FAB badge with participant count
+                        const badge = document.getElementById('ss-fab-badge');
+                        if (entries.length) {
+                            badge.style.display = 'flex';
+                            badge.textContent = entries.length > 99 ? '99+' : entries.length;
+                        }
+                        // timestamp
+                        const now = new Date();
+                        footer.textContent = `actualizado ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                    } catch(e) {
+                        body.innerHTML = '<div class="ss-empty"><i class="fas fa-triangle-exclamation" style="color:var(--yellow);font-size:1.3rem;display:block;margin-bottom:.4rem"></i>Sin conexión</div>';
+                    }
+                }
+
+                // ── FAB / mobile drawer toggle ──
+                document.getElementById('ss-fab').addEventListener('click', () => {
+                    const panel   = document.getElementById('side-scoreboard');
+                    const overlay = document.getElementById('ss-overlay');
+                    const isOpen  = panel.classList.contains('mobile-open');
+                    panel.classList.toggle('mobile-open', !isOpen);
+                    overlay.classList.toggle('active', !isOpen);
+                });
+                document.getElementById('ss-overlay').addEventListener('click', () => {
+                    document.getElementById('side-scoreboard').classList.remove('mobile-open');
+                    document.getElementById('ss-overlay').classList.remove('active');
+                });
 
                 function buildEmailHTML(q) {
                     let linkHTML = '';
@@ -993,6 +1280,9 @@
 
                     // análisis estadístico
                     computeAndRenderAnalytics(allEntries, questionLog);
+
+                    // refresh side panel with fresh data (nuevo score ya guardado)
+                    renderSideScoreboard();
 
                     show('screen-results');
                     document.getElementById('progressFill').style.width = '100%';
@@ -1238,18 +1528,36 @@
                     startCountdown();
                 });
 
-                // pre-load leaderboard on landing (just to show count)
+                // ══════════════════════════════════════════════════════
+                //  INIT — side scoreboard + pill counter
+                // ══════════════════════════════════════════════════════
                 (async () => {
+                    // Show the panel since we start on screen-landing
+                    updateSideScoreboardVisibility('screen-landing');
+
+                    // Load data once — populates side panel AND the landing pill
+                    await renderSideScoreboard();
+
+                    // Also add the participant pill in the landing info-pills
                     try {
-                        const entries = await fetchScoresFromServer();
-                        if (entries.length > 0) {
+                        const badge = document.getElementById('ss-fab-badge');
+                        const count = badge && badge.textContent ? parseInt(badge.textContent) : 0;
+                        if (count > 0) {
                             const p = document.querySelector('.info-pills');
                             const pill = document.createElement('div');
                             pill.className = 'pill';
-                            pill.innerHTML = `<i class="fas fa-users"></i> ${entries.length} participante${entries.length > 1 ? 's' : ''}`;
+                            pill.innerHTML = `<i class="fas fa-users"></i> ${count} participante${count !== 1 ? 's' : ''}`;
                             p.appendChild(pill);
                         }
                     } catch(e) {}
+
+                    // Auto-refresh the side scoreboard every 60s while visible
+                    setInterval(() => {
+                        const panel = document.getElementById('side-scoreboard');
+                        if (!panel.classList.contains('ss-hidden')) {
+                            renderSideScoreboard();
+                        }
+                    }, 60000);
                 })();
         </script>
     </div>
