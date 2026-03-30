@@ -627,9 +627,7 @@
         </a>
     </nav>
 
-    <!-- ═══════════════════════════════════════════════
-         FLOATING SIDE SCOREBOARD (visible en landing y quiz)
-         ═══════════════════════════════════════════════ -->
+    <!--FLOATING SIDE SCOREBOARD (visible en landing y quiz)-->
     <div id="side-scoreboard" class="ss-hidden">
         <div class="ss-header">
             <div class="ss-header-title">
@@ -1072,8 +1070,8 @@
                             badge.textContent = entries.length > 99 ? '99+' : entries.length;
                         }
                         // timestamp
-                        const now = new Date();
-                        footer.textContent = `actualizado ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+                        //const now = new Date();
+                        //footer.textContent = `actualizado ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
                     } catch(e) {
                         body.innerHTML = '<div class="ss-empty"><i class="fas fa-triangle-exclamation" style="color:var(--yellow);font-size:1.3rem;display:block;margin-bottom:.4rem"></i>Sin conexión</div>';
                     }
